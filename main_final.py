@@ -9,11 +9,31 @@ import warnings
 from sklearn.metrics import precision_recall_curve, plot_precision_recall_curve
 warnings.filterwarnings("ignore")
 from model_final import *
+from sklearn.metrics import plot_confusion_matrix, plot_roc_curve, plot_precision_recall_curve
+from sklearn.metrics import precision_score, recall_score
+
 
 pickle_in = open('modelrf.pkl', 'rb')
 classifier = pickle.load(pickle_in)
 
 st.set_page_config(page_title='Lead Prediction Explorer',page_icon="logo.png",layout='wide',initial_sidebar_state='auto',)
+
+
+def plot_metrics(metrics_list):
+    if 'Confusion Matrix' in metrics_list:
+        st.subheader("Confusion Matrix")
+        plot_confusion_matrix(model, x_test, y_test) #, display_labels=class_names)
+        st.pyplot()
+
+    if 'ROC Curve' in metrics_list:
+        st.subheader("ROC Curve")
+        plot_roc_curve(model, x_test, y_test)
+        st.pyplot()
+
+    if 'Precision-Recall Curve' in metrics_list:
+        st.subheader("Precision-Recall Curve")
+        plot_precision_recall_curve(model, x_test, y_test)
+        st.pyplot()
 
 def test_data(datafile):
     test = pd.read_csv(datafile)
@@ -99,9 +119,25 @@ if __name__ == '__main__':
             # st.write("F1score_training:",f1_train)
             st.write("F1score_testing:", f1_test)
 
+            st.set_option('deprecation.showPyplotGlobalUse', False)
+            st.subheader("Confusion Matrix")
+            plot_confusion_matrix(classifier, x_test, y_test)  # , display_labels=class_names)
+            st.pyplot()
+            st.write("Confusion matrix is the way to evaluate model's performance. It basically compared the predictions with actual labels and divide them into four quadrants.")
+
+            st.subheader("ROC Curve")
+            plot_roc_curve(classifier, x_test, y_test)
+            st.pyplot()
+            st.write("ROC Curves summarize the trade-off between the true positive rate and false positive rate for a predictive model using different probability thresholds.")
+
+
+            st.subheader("Precision-Recall Curve")
+            plot_precision_recall_curve(classifier, x_test, y_test)
+            st.pyplot()
+            st.write("Precision-Recall curves summarize the trade-off between the true positive rate and the positive predictive value for a predictive model using different probability thresholds.")
+
             # plt.figure(figsize=(16, 6))
             # ax1 = plt.subplot(121)
             # rf_disp = plot_precision_recall_curve(classifier, x_test, y_test, ax=ax1,
             #                                       name='Random Forest Precision Recall Curve')
             # st.pyplot(rf_disp)
-
